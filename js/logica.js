@@ -2,45 +2,63 @@ console.table(products);
 let cart = [];
 let productContainer = document.getElementById('products');
 let cartItems = document.getElementById("cartItems");
+const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+        confirmButton: 'btn btn-warning m-1',
+        cancelButton: 'btn btn-success m-1'
+    },
+    buttonsStyling: false
+})
 
 
-//DOM
-function productRendering(productList){
-    //we empty the container to avoid dupplicates
+// DOM
+function productRendering(productList) {
+    //We empty the container to avoid dupplicates
     productContainer.innerHTML += "";
-    //Loading the cards of the requested products
-    for(const product of productList){
+    //Loading cards of requested products
+    for (const product of productList) {
         productContainer.innerHTML += `
-        <div class="card" style="width: 20rem;">
+        <div class="card" style="width: 19rem;">
             <img class="card-img-top" src=${product.photo} alt="Card image cap">
             <div class="card-body">
                 <h5 class="card-title">${product.name}</h5>
                 <p class="card-text">Precio $ ${product.price}.00</p>
-                <button id=${product.id} class="btn btn-outline-primary buy">Add to cart</button>
+                <button id=${product.id} class="btn btn-warning buy"><i class="fa-solid fa-cart-shopping"></i> Add to cart</button>
             </div>
         </div>
         `;
     }
-    //events
+    // Events
     let buttons = document.getElementsByClassName("buy");
-    for (const button of buttons){
-        //opcion 1 - addEventListener
-        button.addEventListener('click',()=>{
-            console.log('there is a click on the button id: '+button.id);
+    for (const button of buttons) {
+        //Option 1 - addEventListener
+        button.addEventListener('click', () => {
+            console.log('there is a click on the button id: ' + button.id);
             const itemToCart = products.find((product) => product.id == button.id)
             console.log(itemToCart);
             addToCart(itemToCart);
+            Toastify({
+                text: `${itemToCart.name} has been added to the cart`,
+                duration: 2000,
+                className: "tst",
+                style: {
+                    background: "#ffc107",
+                },
+                gravity: 'top',
+                position: 'right'
+            }).showToast()
         })
-        //opcion 2 (hover)
-        button.onmouseover = () => button.classList.replace('btn-outline-primary', 'btn-primary');
-        button.onmouseout = () => button.classList.replace('btn-primary', 'btn-outline-primary');
+        //Option 2 (hover)
+        button.onmouseover = () => button.classList.replace('btn-warning', 'btn-success');
+        button.onmouseout = () => button.classList.replace('btn-success', 'btn-warning');
     }
 }
 
 productRendering(products);
 
-//Add item to the cart
-function addToCart(product){
+
+// Add item to the cart
+function addToCart(product) {
     cart.push(product);
     console.table(cart);
     cartItems.innerHTML += `
@@ -55,13 +73,13 @@ function addToCart(product){
     updateTotalPrice();
     // Update "Proceed to Payment" button text
     updatePaymentButton();
-    // Save the updated cart to localStorage
+    // Save updated cart to localStorage
     saveCartToLocalStorage();
-    // Update the cart table with the new item
+    // Update cart table with the new item
     updateCartTable();
 }
 
-// Calculate the total price of items in the cart
+// Calculate total price of items in the cart
 function calculateTotalPrice() {
     let totalPrice = 0;
     for (const item of cart) {
@@ -70,13 +88,13 @@ function calculateTotalPrice() {
     return totalPrice;
 }
 
-// Update the total price in the cart table
+// Update total price in the cart table
 function updateTotalPrice() {
     const totalPrice = calculateTotalPrice();
     cartTotal.innerHTML = `$${totalPrice.toFixed(2)}`;
 }
 
-// Calculate the total count of items in the cart
+// Calculate total count of items in the cart
 function calculateTotalItemCount() {
     return cart.length;
 }
@@ -88,7 +106,7 @@ function updatePaymentButton() {
     btnPayment.textContent = `Proceed to payment (${totalItemCount})`;
 }
 
-// Function to update the cart table with the items from the cart
+// Update the cart table with the items from the cart
 function updateCartTable() {
     cartItems.innerHTML = '';
     cart.forEach((product) => {
@@ -105,7 +123,7 @@ function updateCartTable() {
     updateTotalPrice();
 }
 
-// Function to clear the whole cart
+// Clear the whole cart
 function clearCart() {
     cart = [];
     // Save the updated cart to localStorage
@@ -117,29 +135,29 @@ function clearCart() {
 }
 
 
-//keyboard events
+// Events Newsletter
 let emailNewsletter = document.getElementById('email');
 
 emailNewsletter.onkeyup = () => {
-    if(emailNewsletter.value.length < 13 || ((!emailNewsletter.value.includes('@')|| !emailNewsletter.value.includes('.')))){
+    if (emailNewsletter.value.length < 13 || ((!emailNewsletter.value.includes('@') || !emailNewsletter.value.includes('.')))) {
         console.log('invalid email')
-        emailNewsletter.style.color ='#bb0f0f';
+        emailNewsletter.style.color = '#bb0f0f';
         document.getElementById('emailHelp').innerText = "Please enter a valid e-mail adress.";
-    }else{
-        emailNewsletter.style.color ='black';
+    } else {
+        emailNewsletter.style.color = 'black';
         document.getElementById('emailHelp').innerText = "Cool email! :)";
     }
 }
-
+// Event onChange for Newsletter
 emailNewsletter.onchange = () => {
     document.getElementById('emailHelp').innerText = "We'll never share your email with anyone else.";
 }
-
+// Event listener for Newsletter
 let formNewsletter = document.getElementById('formNewsletter');
 formNewsletter.addEventListener('submit', validate);
-
-function validate(ev){
-    if(emailNewsletter.value == ''){
+//Validate emai before sending
+function validate(ev) {
+    if (emailNewsletter.value == '') {
         ev.preventDefault();
         alert('Enter a valid email')
     }
@@ -147,29 +165,38 @@ function validate(ev){
 
 // Event listener for the "Clear Cart" button
 const btnClearCart = document.getElementById('btnClearCart');
-btnClearCart.addEventListener('click', clearCart);
+btnClearCart.addEventListener('click', () => {
+    clearCart()
+    swalWithBootstrapButtons.fire({
+        title: 'Are you sure you want to empty your cart?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, empty it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire(
+                'Fresh new cart!',
+                'Your cart has been emptied.',
+                'success'
+            )
+        }
+    })
+});
 
 
-/*
-//local storage
-const prodsJSON = JSON.stringify(products);
-console.log(prodsJSON);
-
-localStorage.setItem('stock', prodsJSON);
-*/
-
-// Function to save the cart items to localStorage
+// Save the cart items to localStorage
 function saveCartToLocalStorage() {
     localStorage.setItem('cartItems', JSON.stringify(cart));
 }
 
-// Function to get the cart items from localStorage
+// Get the cart items from localStorage
 function getCartFromLocalStorage() {
     const storedCart = localStorage.getItem('cartItems');
     return storedCart ? JSON.parse(storedCart) : [];
 }
 
-// Function to update the cart from localStorage
+// Update the cart from localStorage
 function updateCartFromLocalStorage() {
     cart = getCartFromLocalStorage();
     // Update the cart table with the items retrieved from localStorage
@@ -185,8 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
-//dark & light mode button
+// Dark & light mode button
 const modeButton = document.getElementById('modeButton');
 const container = document.getElementById('mainBody');
 
@@ -215,6 +241,7 @@ modeButton.onclick = () => {
     }
 }
 
+// Dark mode settings
 function toDark() {
     document.body.className = 'dark';
     container.classList.replace('light', 'dark');
@@ -222,9 +249,19 @@ function toDark() {
     localStorage.setItem('modeButton', 'dark');
 }
 
+// Light mode settings
 function toLight() {
     document.body.className = 'light';
     container.classList.replace('dark', 'light');
     modeButton.innerText = 'Dark Mode';
     localStorage.setItem('modeButton', 'light');
 }
+
+
+/*
+//local storage
+const prodsJSON = JSON.stringify(products);
+console.log(prodsJSON);
+
+localStorage.setItem('stock', prodsJSON);
+*/

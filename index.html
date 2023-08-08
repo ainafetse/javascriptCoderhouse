@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <!--Meta-->
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,18 +17,24 @@
     <meta property="og:description" content="Online shop of a NuArt Gallery for you to wear and decorate">
     <meta property="og:url" content="www.renkendo.com">
     <meta property="og:image" content="url(/assets/img/logo.png)">
+    <!--Title-->
     <title>Renkendo</title>
+    <!--Styles-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" href="./css/style.css" />
+    <!--Script fontawesome-->
     <script src="https://kit.fontawesome.com/e77bd3fa9a.js" crossorigin="anonymous"></script>
 </head>
-
+<!--body-->
 <body class="light" id="mainBody">
-    <div class="container">
-        <div class="title">
+    <header>
+        <div class="container-fluid title">
             <h1 class="text-center">Rekendo Shop</h1>
         </div>
+    </header>
+    <div class="container">
         <div class="menu">
             <div class="searchBar">
                 <h3>Search by name:</h3>
@@ -38,7 +45,7 @@
                 <button id="modeButton" class="btn btn-outline-secondary">Dark Mode</button>
             </div>
         </div>
-        <div id="products" class="row">
+        <div id="products" class="row justify-content-between">
             <!-- Aqui los resultados de productos por busqueda -->
         </div>
         <div id="cart" class="cart">
@@ -79,23 +86,17 @@
                 <div class="form-group">
                     <!--<label for="email"></label>-->
                     <input type="email" class="form-control add-email" id="email" placeholder="name@example.com">
-                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
+                    <small id="emailHelp" class="form-text text-muted smallForm">We'll never share your email with anyone
                         else.</small>
                 </div>
                 <button type="submit" class="btn btn-primary submit-email" value="send">Sign me up!</button>
             </form>
-            <!--<div class="content">
-                <form class="subscription">
-                    <input class="add-email" type="email" id="email" placeholder="me@mail.com"/><br>
-                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-                    <button class="submit-email" type="button" value="send">Subscribe</button>
-                </form>
-            </div>-->
         </div>
         <div class="newsletterImage">
             <img src="./assets/img/newsletter.png" alt="woman drinking coffee" />
         </div>
     </div>
+    <!--Footer-->
     <footer>
         <div class="footer">
             <a href="https://www.instagram.com/renegarza__/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
@@ -104,9 +105,12 @@
             <a href="https://www.twitter.com/rene_gr/" target="_blank"><i class="fa-brands fa-twitter"></i></a>
         </div>
     </footer>
+    <!--Scripts-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
         crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="./js/productos.js"></script>
     <script src="./js/logica.js"></script>
 </body>

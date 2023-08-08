@@ -19,6 +19,7 @@
 
 .card {
     margin: 0.5rem;
+    color: #000;
 }
 
 .card-img-top {
@@ -43,6 +44,27 @@
 }
 .btnPayment{
     margin: 0.5rem;
+}
+.btnBuyIddle{
+    background-color: #000;
+    color: white;
+    padding: 1rem 2rem;
+}
+.btnBuyHover{
+    background-color: #ffc107;
+    color: black;
+    padding: 1rem 2rem;
+}
+.tst{
+    color: #000;
+}
+
+div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm{
+    background-color: #000;
+}
+
+.smallForm{
+    font-size: 1rem;
 }
 
 /*Inicio de estilos del menú*/
