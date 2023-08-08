@@ -1,11 +1,16 @@
-.bg-color {
-    background-color: #ecebeb;
+.dark{
+    background-color: black;
+    color: white;
 }
 
-;
+.light{
+    background-color: #e3e3e3;
+    color: black;
+}
 
 .title {
     background-color: black;
+    color: white;
     font-size: 3em;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     font-weight: 800;
@@ -19,8 +24,21 @@
 .card-img-top {
     margin: 1rem 0 0 0;
 }
+.cart{
+    background-color: #e3e3e3;
+    padding: 1rem;
+    border-radius: 0.5em;
+    color: #000;
+}
 .cart-size{
     width: 80px;
+}
+/*Inicio de estilos del menú*/
+.menu{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
 /*Inicio de estilos del newsletter*/
@@ -71,10 +89,14 @@
     background: #e3e3e3;
     color: #000;
 }
-
+.submit-email{
+    background-color: #666666;
+    border: #666666 1px solid;
+}
 .submit-email:hover {
     color: white;
     background-color: black;
+    border: #000 1px solid;
 }
 
 .newsletterImage img {

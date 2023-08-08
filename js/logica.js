@@ -79,65 +79,52 @@ function validate(ev){
     }
 }
 
+//local storage
+const prodsJSON = JSON.stringify(products);
+console.log(prodsJSON);
+
+localStorage.setItem('stock', prodsJSON);
 
 
+//dark & light mode
+const modeButton = document.getElementById('modeButton');
+const container = document.getElementById('mainBody');
 
-//let searchContainer = document.getElementById('search')
-/*
-function filterByPrice(maxPrice){
-    const filtered = shirts.filter((shirt) => shirt.price <= maxPrice);
-    console.log(filtered);
-    return filtered;
+console.log('Mode is set to ' + localStorage.getItem('modeButton'));
+
+// Get the mode from localStorage or set 'light' as default if it's not set
+const currentMode = localStorage.getItem('modeButton') || 'light';
+
+// Conditional
+if (currentMode === 'dark') {
+    // If it is set to dark
+    document.body.className = 'dark';
+    container.classList.replace('light', 'dark');
+    modeButton.innerText = 'Light Mode';
+} else {
+    // If it is set to light
+    localStorage.setItem('modeButton', 'light');
 }
 
-let selectedPrice = parseFloat(prompt('Precio máximo de prenda que buscas(0-exit)'));
-
-while(selectedPrice != 0){
-    if(isNaN(selectedPrice) || selectedPrice < 0){
-        alert('Por favor, ingresa un número válido');
-    }else{
-        const filteredProducts = filterByPrice(selectedPrice);
-        console.table(filteredProducts);
-        productRendering(filteredProducts);
-    }
-    selectedPrice = parseFloat(prompt('Precio máximo de prenda que buscas(0-exit)'));
-}*/
-
-/*
-//Search by name filter
-function filterByName(name) {
-    const result = shirts.filter(shirt => shirt.name.toLowerCase().includes(name.toLowerCase()));
-    return result;
-}
-
-
-document.getElementById('btnSearch').addEventListener('click', function(event) {
-    event.preventDefault();
-    const nameSearch = document.getElementById('searchInput').value;
-    const searchProducts = filterByName(nameSearch);
-    console.table(searchProducts);
-  // Clear previous results and render the new search results
-    searchRendering(searchProducts);
-});
-
-//DOM of searchbar
-function searchRendering(searchProducts, clearPreviousResults = true) {
-    if (clearPreviousResults) {
-      // Clear previous search results
-    searchContainer.innerHTML = '';
-    }
-    // Render the search results
-    for (const shirt of searchProducts) {
-    searchContainer.innerHTML += `
-        <div class="card" style="width: 20rem;">
-            <img class="card-img-top" src=${shirt.photo} alt="Card image cap">
-            <div class="card-body">
-                <h5 class="card-title">${shirt.name}</h5>
-                <p class="card-text">Precio $ ${shirt.price}.00</p>
-                <a href="#" class="btn btn-primary">Add to Cart</a>
-            </div>
-        </div>
-    `;
+// Button mode event
+modeButton.onclick = () => {
+    if (localStorage.getItem('modeButton') === 'light') {
+        toDark();
+    } else {
+        toLight();
     }
 }
-*/
+
+function toDark() {
+    document.body.className = 'dark';
+    container.classList.replace('light', 'dark');
+    modeButton.innerText = 'Light Mode';
+    localStorage.setItem('modeButton', 'dark');
+}
+
+function toLight() {
+    document.body.className = 'light';
+    container.classList.replace('dark', 'light');
+    modeButton.innerText = 'Dark Mode';
+    localStorage.setItem('modeButton', 'light');
+}

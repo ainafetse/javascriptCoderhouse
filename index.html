@@ -23,21 +23,26 @@
     <script src="https://kit.fontawesome.com/e77bd3fa9a.js" crossorigin="anonymous"></script>
 </head>
 
-<body class="bg-color">
+<body class="light" id="mainBody">
     <div class="container">
         <div class="title">
             <h1 class="text-center">Rekendo Shop</h1>
         </div>
-        <div class="searchBar">
-            <h2>Search by name:</h2>
-            <input type="text" id="searchInput">
-            <button class="btn btn-light" id="btnSearch">Search</button>
+        <div class="menu">
+            <div class="searchBar">
+                <h3>Search by name:</h3>
+                <input type="text" id="searchInput">
+                <button class="btn btn-light" id="btnSearch">Search</button>
+            </div>
+            <div>
+                <button id="modeButton" class="btn btn-outline-secondary">Dark Mode</button>
+            </div>
         </div>
         <div id="products" class="row">
             <!-- Aqui los resultados de productos por busqueda -->
         </div>
-        <div id="cart">
-            <h4>Your cart:</h4>
+        <div id="cart" class="cart">
+            <h5>Your shopping cart:</h5>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -51,8 +56,9 @@
                     <!-- aqui tabla carrito -->
                 </tbody>
             </table>
-            <div id="cartTotalPrice">
-                <h4>Grand Total $:</h4>
+            <div class="cartTotalPrice">
+                <h5 id="totalPrice">Total $:</h5>
+                <button id="btnPayment" class="btn btn-warning btnPayment">Proceed to payment</button>
             </div>
         </div>
     </div>
