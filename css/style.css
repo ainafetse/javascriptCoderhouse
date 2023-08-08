@@ -33,6 +33,18 @@
 .cart-size{
     width: 80px;
 }
+.priceTotal{
+    font-size: 1.2em;
+    font-weight: 700;
+}
+
+.btnClearCart{
+    margin: 0.5rem;
+}
+.btnPayment{
+    margin: 0.5rem;
+}
+
 /*Inicio de estilos del menú*/
 .menu{
     display: flex;

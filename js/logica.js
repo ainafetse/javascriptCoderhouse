@@ -1,7 +1,8 @@
 console.table(products);
-const cart = [];
-let productContainer = document.getElementById('products')
+let cart = [];
+let productContainer = document.getElementById('products');
 let cartItems = document.getElementById("cartItems");
+
 
 //DOM
 function productRendering(productList){
@@ -38,6 +39,7 @@ function productRendering(productList){
 
 productRendering(products);
 
+//Add item to the cart
 function addToCart(product){
     cart.push(product);
     console.table(cart);
@@ -48,10 +50,74 @@ function addToCart(product){
         <td>${product.name}</td>
         <td>$ ${product.price}.00</td>
     </tr>
-    `
+    `;
+    // Calculate and update total price
+    updateTotalPrice();
+    // Update "Proceed to Payment" button text
+    updatePaymentButton();
+    // Save the updated cart to localStorage
+    saveCartToLocalStorage();
+    // Update the cart table with the new item
+    updateCartTable();
 }
 
-//eventos de teclado
+// Calculate the total price of items in the cart
+function calculateTotalPrice() {
+    let totalPrice = 0;
+    for (const item of cart) {
+        totalPrice += item.price;
+    }
+    return totalPrice;
+}
+
+// Update the total price in the cart table
+function updateTotalPrice() {
+    const totalPrice = calculateTotalPrice();
+    cartTotal.innerHTML = `$${totalPrice.toFixed(2)}`;
+}
+
+// Calculate the total count of items in the cart
+function calculateTotalItemCount() {
+    return cart.length;
+}
+
+// Update the text of the button
+function updatePaymentButton() {
+    const totalItemCount = calculateTotalItemCount();
+    const btnPayment = document.getElementById('btnPayment');
+    btnPayment.textContent = `Proceed to payment (${totalItemCount})`;
+}
+
+// Function to update the cart table with the items from the cart
+function updateCartTable() {
+    cartItems.innerHTML = '';
+    cart.forEach((product) => {
+        cartItems.innerHTML += `
+            <tr>
+                <td>${product.id}</td>
+                <td><img src="${product.photo}" alt="${product.name}" class="cart-size"></td>
+                <td>${product.name}</td>
+                <td>$ ${product.price}.00</td>
+            </tr>
+        `;
+    });
+    // Calculate and update total price
+    updateTotalPrice();
+}
+
+// Function to clear the whole cart
+function clearCart() {
+    cart = [];
+    // Save the updated cart to localStorage
+    saveCartToLocalStorage();
+    // Update the cart table with the new items (empty cart)
+    updateCartTable();
+    // Update "Proceed to Payment" button text
+    updatePaymentButton();
+}
+
+
+//keyboard events
 let emailNewsletter = document.getElementById('email');
 
 emailNewsletter.onkeyup = () => {
@@ -79,14 +145,48 @@ function validate(ev){
     }
 }
 
+// Event listener for the "Clear Cart" button
+const btnClearCart = document.getElementById('btnClearCart');
+btnClearCart.addEventListener('click', clearCart);
+
+
+/*
 //local storage
 const prodsJSON = JSON.stringify(products);
 console.log(prodsJSON);
 
 localStorage.setItem('stock', prodsJSON);
+*/
+
+// Function to save the cart items to localStorage
+function saveCartToLocalStorage() {
+    localStorage.setItem('cartItems', JSON.stringify(cart));
+}
+
+// Function to get the cart items from localStorage
+function getCartFromLocalStorage() {
+    const storedCart = localStorage.getItem('cartItems');
+    return storedCart ? JSON.parse(storedCart) : [];
+}
+
+// Function to update the cart from localStorage
+function updateCartFromLocalStorage() {
+    cart = getCartFromLocalStorage();
+    // Update the cart table with the items retrieved from localStorage
+    updateCartTable();
+    // Update the "Proceed to Payment" button with the total item count
+    updatePaymentButton();
+}
+
+// Recovering cart from localStorage when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    updateCartFromLocalStorage();
+});
 
 
-//dark & light mode
+
+
+//dark & light mode button
 const modeButton = document.getElementById('modeButton');
 const container = document.getElementById('mainBody');
 

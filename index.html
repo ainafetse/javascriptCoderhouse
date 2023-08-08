@@ -55,10 +55,16 @@
                 <tbody id="cartItems">
                     <!-- aqui tabla carrito -->
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="priceTotal" colspan="3">Total:</td>
+                        <td class="priceTotal" id="cartTotal">$0.00</td>
+                    </tr>
+                </tfoot>
             </table>
-            <div class="cartTotalPrice">
-                <h5 id="totalPrice">Total $:</h5>
-                <button id="btnPayment" class="btn btn-warning btnPayment">Proceed to payment</button>
+            <div class="d-flex justify-content-end">
+                <button id="btnClearCart" class="btn btn-danger btnClearCart">Clear Cart</button>
+                <button id="btnPayment" class="btn btn-warning btnPayment">Proceed to payment (0)</button>
             </div>
         </div>
     </div>
@@ -73,7 +79,8 @@
                 <div class="form-group">
                     <!--<label for="email"></label>-->
                     <input type="email" class="form-control add-email" id="email" placeholder="name@example.com">
-                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
+                        else.</small>
                 </div>
                 <button type="submit" class="btn btn-primary submit-email" value="send">Sign me up!</button>
             </form>
