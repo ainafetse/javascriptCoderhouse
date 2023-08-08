@@ -3,8 +3,20 @@
 
 <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <meta name="keywords"
+        content="original design t-shirts, graphic t-shirts, unisex graphic t-shirts, buy fashion online, graphic t-shirts online, buy original paintings online, cool paintings, ">
+    <meta name="description"
+        content="Gallery where art meets design. Search the full gallery for your favorite art and show it off proudly it proudly.">
+    <meta name="author" content="Estefania Tenorio">
+    <meta name="copyright" content="Rene Garza">
+    <meta name="robots" content="">
+    <meta property="og:title" content="Renkendo Art Gallery">
+    <meta property="og:description" content="Online shop of a NuArt Gallery for you to wear and decorate">
+    <meta property="og:url" content="www.renkendo.com">
+    <meta property="og:image" content="url(/assets/img/logo.png)">
+    <title>Renkendo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous" />
     <link rel="stylesheet" href="./css/style.css" />
@@ -21,17 +33,64 @@
             <input type="text" id="searchInput">
             <button class="btn btn-light" id="btnSearch">Search</button>
         </div>
-        <div id="search" class="row">
+        <div id="products" class="row">
             <!-- Aqui los resultados de productos por busqueda -->
         </div>
         <div id="cart">
             <h4>Your cart:</h4>
-            <ul id="cartItems"></ul>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Photo</th>
+                        <th>Product</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody id="cartItems">
+                    <!-- aqui tabla carrito -->
+                </tbody>
+            </table>
             <div id="cartTotalPrice">
                 <h4>Grand Total $:</h4>
             </div>
         </div>
     </div>
+    <div class="newsletterContainer">
+        <div class="newsletterInfo">
+            <h2>Subscribe to our newsletter and stay updated!</h2>
+            <p>
+                Subscribe to our newsletter to receive the latest updates and new collections and be the first to grab
+                the latest art pices. No spam.
+            </p>
+            <form id="formNewsletter">
+                <div class="form-group">
+                    <!--<label for="email"></label>-->
+                    <input type="email" class="form-control add-email" id="email" placeholder="name@example.com">
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                </div>
+                <button type="submit" class="btn btn-primary submit-email" value="send">Sign me up!</button>
+            </form>
+            <!--<div class="content">
+                <form class="subscription">
+                    <input class="add-email" type="email" id="email" placeholder="me@mail.com"/><br>
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                    <button class="submit-email" type="button" value="send">Subscribe</button>
+                </form>
+            </div>-->
+        </div>
+        <div class="newsletterImage">
+            <img src="./assets/img/newsletter.png" alt="woman drinking coffee" />
+        </div>
+    </div>
+    <footer>
+        <div class="footer">
+            <a href="https://www.instagram.com/renegarza__/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <p class="displayMobile">René Garza 2023.® <br>All rights reserved.</p>
+            <p class="displayWeb">René Garza 2023.® All rights reserved.</p>
+            <a href="https://www.twitter.com/rene_gr/" target="_blank"><i class="fa-brands fa-twitter"></i></a>
+        </div>
+    </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
         crossorigin="anonymous"></script>
