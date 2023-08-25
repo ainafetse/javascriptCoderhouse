@@ -2,6 +2,10 @@ console.table(products);
 let cart = [];
 let productContainer = document.getElementById('products');
 let cartItems = document.getElementById("cartItems");
+let lastShownProductIndex = 12; //product index variable
+const numProductsToShow = 12; // Initial number of products to be displayed
+const numProductsToAdd = 4;   // Number of products to add when "Load More" is clicked
+const loadMoreBtn = document.getElementById('loadMoreBtn');
 const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
         confirmButton: 'btn btn-warning m-1',
@@ -10,23 +14,40 @@ const swalWithBootstrapButtons = Swal.mixin({
     buttonsStyling: false
 })
 
+// DOMContentLoaded event listener & Recovering cart from localStorage when the page reloads
+document.addEventListener('DOMContentLoaded', () => {
+    updateCartFromLocalStorage();
+    updateCartAndUserFromLocalStorage(); // Update user information
+    productRendering(lastShownProductIndex);
+    // Load More button event listener
+    loadMoreBtn.addEventListener('click', () => {
+        loadMoreProducts();
+    });
+});
 
 // DOM
-function productRendering(productList) {
-    //We empty the container to avoid dupplicates
-    productContainer.innerHTML += "";
+function productRendering(numToShow) {
+    productContainer.innerHTML = ""; //Clear the container
+    let counter = 0; //Add a counter
     //Loading cards of requested products
-    for (const product of productList) {
+    for (let i = 0; i < numToShow; i++) {
+        if (counter >= numToShow) {
+            break;
+        }
+        const product = products[i];
         productContainer.innerHTML += `
-        <div class="card" style="width: 19rem;">
+        <div class="card position-relative" style="width: 17.5rem;">
             <img class="card-img-top" src=${product.photo} alt="Card image cap">
-            <div class="card-body">
-                <h5 class="card-title">${product.name}</h5>
-                <p class="card-text">Precio $ ${product.price}.00</p>
-                <button id=${product.id} class="btn btn-warning buy"><i class="fa-solid fa-cart-shopping"></i> Add to cart</button>
+            <div class="overlay">
+                <div class="overlay-content">
+                    <h5 class="card-title">${product.name}</h5>
+                    <p class="card-text">Precio $ ${product.price}.00 MXN</p>
+                    <button id=${product.id} class="btn btn-light buy"><i class="bi bi-cart-plus-fill"></i></button>
+                </div>
             </div>
         </div>
         `;
+        counter++;
     }
     // Events
     let buttons = document.getElementsByClassName("buy");
@@ -49,26 +70,38 @@ function productRendering(productList) {
             }).showToast()
         })
         //Option 2 (hover)
-        button.onmouseover = () => button.classList.replace('btn-warning', 'btn-success');
-        button.onmouseout = () => button.classList.replace('btn-success', 'btn-warning');
+        button.onmouseover = () => button.classList.replace('btn-light', 'btn-warning');
+        button.onmouseout = () => button.classList.replace('btn-warning', 'btn-light');
     }
+    console.log('Products rendered:', counter);
 }
 
-productRendering(products);
+// Function to load more products
+function loadMoreProducts() {
+    const remainingProducts = products.length - lastShownProductIndex;
+    const numToShowNext = Math.min(remainingProducts, numProductsToAdd);
+
+    if (numToShowNext > 0) {
+        lastShownProductIndex += numToShowNext;
+        productRendering(lastShownProductIndex);
+    } else {
+        loadMoreBtn.disabled = true;
+        loadMoreBtn.textContent = "No more products";
+    }
+}
 
 
 // Add item to the cart
 function addToCart(product) {
-    cart.push(product);
+    const existingCartItem = cart.find(item => item.product.id === product.id);
+    if (existingCartItem) {
+        // If the product is already in the cart, increase its quantity
+        existingCartItem.quantity++;
+    } else {
+        // If the product is not in the cart, add it with a quantity of 1
+        cart.push({ product: product, quantity: 1 });
+    }
     console.table(cart);
-    cartItems.innerHTML += `
-    <tr>
-        <td>${product.id}</td>
-        <td><img src="${product.photo}" alt="${product.name}" class="cart-size"></td>
-        <td>${product.name}</td>
-        <td>$ ${product.price}.00</td>
-    </tr>
-    `;
     // Calculate and update total price
     updateTotalPrice();
     // Update "Proceed to Payment" button text
@@ -82,8 +115,10 @@ function addToCart(product) {
 // Calculate total price of items in the cart
 function calculateTotalPrice() {
     let totalPrice = 0;
-    for (const item of cart) {
-        totalPrice += item.price;
+    for (const cartItem of cart) {
+        const product = cartItem.product;
+        const quantity = cartItem.quantity;
+        totalPrice += product.price * quantity;
     }
     return totalPrice;
 }
@@ -91,7 +126,7 @@ function calculateTotalPrice() {
 // Update total price in the cart table
 function updateTotalPrice() {
     const totalPrice = calculateTotalPrice();
-    cartTotal.innerHTML = `$${totalPrice.toFixed(2)}`;
+    cartTotal.innerHTML = `$${totalPrice.toFixed(2)} MXN`;
 }
 
 // Calculate total count of items in the cart
@@ -101,27 +136,183 @@ function calculateTotalItemCount() {
 
 // Update the text of the button
 function updatePaymentButton() {
-    const totalItemCount = calculateTotalItemCount();
+    const totalQuantity = calculateTotalQuantity();
     const btnPayment = document.getElementById('btnPayment');
-    btnPayment.textContent = `Proceed to payment (${totalItemCount})`;
+    btnPayment.innerHTML = `<i class="bi bi-cart"></i> Proceed to payment (${totalQuantity})`;
+
+    // Add event listener to show the modal
+    btnPayment.addEventListener('click', () => {
+        $('#createAccountModal').modal('show');
+    });
 }
+
+
+// Calculate total quantity of items in the cart
+function calculateTotalQuantity() {
+    let totalQuantity = 0;
+    for (const item of cart) {
+        totalQuantity += item.quantity;
+    }
+    return totalQuantity;
+}
+
 
 // Update the cart table with the items from the cart
 function updateCartTable() {
     cartItems.innerHTML = '';
-    cart.forEach((product) => {
+    cart.forEach((cartItem, index) => {
+        const product = cartItem.product;
+        const quantity = cartItem.quantity;
+
         cartItems.innerHTML += `
             <tr>
-                <td>${product.id}</td>
+                <td>
+                    <button class="btn btn-sm btn-light minus-item" data-index="${index}">
+                        <i class="bi bi-dash"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger remove-item ${quantity === 1 ? '' : 'd-none'}" data-index="${index}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                    ${quantity}
+                    <button class="btn btn-sm btn-light plus-item" data-index="${index}">
+                        <i class="bi bi-plus"></i>
+                    </button>
+                </td>
                 <td><img src="${product.photo}" alt="${product.name}" class="cart-size"></td>
                 <td>${product.name}</td>
-                <td>$ ${product.price}.00</td>
+                <td>$ ${product.price}.00 MXN</td>
             </tr>
         `;
+
+        // Hide the minus button if the quantity is 1
+        const minusButton = document.getElementsByClassName('minus-item')[index];
+        if (quantity === 1) {
+            minusButton.classList.add('d-none');
+        } else {
+            minusButton.classList.remove('d-none');
+        }
+
+        // Show the trash button if the quantity is 1
+        const trashButton = document.getElementsByClassName('remove-item')[index];
+        if (quantity === 1) {
+            trashButton.classList.remove('d-none');
+        } else {
+            trashButton.classList.add('d-none');
+        }
     });
+
     // Calculate and update total price
     updateTotalPrice();
+
+    // Attach event listeners for plus, minus, and remove buttons
+    attachCartButtonListeners();
 }
+
+
+// Define the new functions to handle removing, decreasing, and increasing the quantity of items
+function removeFromCart(index) {
+    cart.splice(index, 1);
+    updateCartTable();
+    saveCartToLocalStorage();
+    updatePaymentButton();
+}
+
+function decreaseQuantity(index) {
+    const cartItem = cart[index];
+    if (cartItem.quantity > 1) {
+        cartItem.quantity--;
+        updateCartTable();
+        saveCartToLocalStorage();
+        updatePaymentButton();
+    }
+}
+
+function increaseQuantity(index) {
+    const cartItem = cart[index];
+    cartItem.quantity++;
+    updateCartTable();
+    saveCartToLocalStorage();
+    updatePaymentButton();
+}
+
+// Attach event listeners for plus, minus, and remove buttons
+attachCartButtonListeners();
+
+
+function attachCartButtonListeners() {
+    const removeButtons = document.getElementsByClassName('remove-item');
+    const minusButtons = document.getElementsByClassName('minus-item');
+    const plusButtons = document.getElementsByClassName('plus-item');
+
+    // Convert HTMLCollection to array
+    const removeButtonArray = Array.from(removeButtons);
+    const minusButtonArray = Array.from(minusButtons);
+    const plusButtonArray = Array.from(plusButtons);
+
+    removeButtonArray.forEach(button => {
+        button.addEventListener('click', () => {
+            const index = button.getAttribute('data-index');
+            showDeleteConfirmation(index);
+        });
+    });
+
+    minusButtonArray.forEach(button => {
+        button.addEventListener('click', () => {
+            const index = button.getAttribute('data-index');
+            decreaseQuantity(index);
+        });
+    });
+
+    plusButtonArray.forEach(button => {
+        button.addEventListener('click', () => {
+            const index = button.getAttribute('data-index');
+            increaseQuantity(index);
+        });
+    });
+}
+
+function showDeleteConfirmation(index) {
+    swalWithBootstrapButtons.fire({
+        title: 'Are you sure?',
+        text: 'You are about to remove this item from your cart.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, remove it!',
+        cancelButtonText: 'No, keep it',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            removeFromCart(index);
+            Swal.fire(
+                'Removed!',
+                'The item has been removed from your cart.',
+                'success'
+            );
+        }
+    });
+}
+
+
+// Event listener for the "Clear Cart" button
+const btnClearCart = document.getElementById('btnClearCart');
+btnClearCart.addEventListener('click', () => {
+    swalWithBootstrapButtons.fire({
+        title: 'Are you sure you want to empty your cart?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, empty it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            clearCart(); // Clear the cart if confirmed
+            Swal.fire(
+                'Fresh new cart!',
+                'Your cart has been emptied.',
+                'success'
+            );
+        }
+    });
+});
 
 // Clear the whole cart
 function clearCart() {
@@ -134,8 +325,63 @@ function clearCart() {
     updatePaymentButton();
 }
 
+// Save the cart items to localStorage
+function saveCartToLocalStorage() {
+    localStorage.setItem('cartItems', JSON.stringify(cart));
+}
 
-// Events Newsletter
+// Get the cart items from localStorage
+function getCartFromLocalStorage() {
+    const storedCart = localStorage.getItem('cartItems');
+    return storedCart ? JSON.parse(storedCart) : [];
+}
+
+// Update the cart from localStorage
+function updateCartFromLocalStorage() {
+    cart = getCartFromLocalStorage();
+    // Update the cart table with the items retrieved from localStorage
+    updateCartTable();
+    // Update the "Proceed to Payment" button with the total item count
+    updatePaymentButton();
+}
+
+
+////************Login Request*/
+// Handle account creation form submission
+const createAccountBtn = document.getElementById('createAccountBtn');
+createAccountBtn.addEventListener('click', () => {
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+
+    // Store user information in local storage
+    const user = { name, email };
+    localStorage.setItem('user', JSON.stringify(user));
+
+    // Close the modal
+    $('#createAccountModal').modal('hide');
+
+    // Update "Proceed to Payment" button text
+    updatePaymentButton();
+});
+
+// Update the cart from localStorage and user information
+function updateCartAndUserFromLocalStorage() {
+    cart = getCartFromLocalStorage();
+    user = getUserFromLocalStorage();
+    updateCartTable();
+    updatePaymentButton();
+}
+
+// Get user information from localStorage
+function getUserFromLocalStorage() {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
+}
+
+
+
+
+// *****************Events Newsletter
 let emailNewsletter = document.getElementById('email');
 
 emailNewsletter.onkeyup = () => {
@@ -162,55 +408,6 @@ function validate(ev) {
         alert('Enter a valid email')
     }
 }
-
-// Event listener for the "Clear Cart" button
-const btnClearCart = document.getElementById('btnClearCart');
-btnClearCart.addEventListener('click', () => {
-    clearCart()
-    swalWithBootstrapButtons.fire({
-        title: 'Are you sure you want to empty your cart?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, empty it!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire(
-                'Fresh new cart!',
-                'Your cart has been emptied.',
-                'success'
-            )
-        }
-    })
-});
-
-
-// Save the cart items to localStorage
-function saveCartToLocalStorage() {
-    localStorage.setItem('cartItems', JSON.stringify(cart));
-}
-
-// Get the cart items from localStorage
-function getCartFromLocalStorage() {
-    const storedCart = localStorage.getItem('cartItems');
-    return storedCart ? JSON.parse(storedCart) : [];
-}
-
-// Update the cart from localStorage
-function updateCartFromLocalStorage() {
-    cart = getCartFromLocalStorage();
-    // Update the cart table with the items retrieved from localStorage
-    updateCartTable();
-    // Update the "Proceed to Payment" button with the total item count
-    updatePaymentButton();
-}
-
-// Recovering cart from localStorage when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    updateCartFromLocalStorage();
-});
-
-
 
 // Dark & light mode button
 const modeButton = document.getElementById('modeButton');
